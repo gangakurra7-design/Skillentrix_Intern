@@ -1,0 +1,55 @@
+#include <LiquidCrystal.h>
+
+const int LDR_PIN = A0;
+LiquidCrystal lcd(7, 6, 5, 4, 3, 2);
+
+const int LED_R = 8;
+const int LED_G = 9;
+const int LED_B = 10;
+
+const int DARK_THRESHOLD = 350;
+const int BRIGHT_THRESHOLD = 700;
+
+void setRGB(bool r, bool g, bool b)
+{
+  digitalWrite(LED_R, r ? HIGH : LOW);
+  digitalWrite(LED_G, g ? HIGH : LOW);
+  digitalWrite(LED_B, b ? HIGH : LOW);
+}
+
+void setup()
+{
+  pinMode(LED_R, OUTPUT);
+  pinMode(LED_G, OUTPUT);
+  pinMode(LED_B, OUTPUT);
+  lcd.begin(16, 2);
+  lcd.print("Light Sensor");
+  delay(1200);
+}
+
+void loop()
+{
+  int lightValue = analogRead(LDR_PIN);
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("ADC: ");
+  lcd.print(lightValue);
+  lcd.setCursor(0, 1);
+
+  if (lightValue < DARK_THRESHOLD)
+  {
+    setRGB(true, false, false);
+    lcd.print("Status: DARK");
+  }
+  else if (lightValue < BRIGHT_THRESHOLD)
+  {
+    setRGB(false, true, false);
+    lcd.print("Status: NORMAL");
+  }
+  else
+  {
+    setRGB(false, false, true);
+    lcd.print("Status: BRIGHT");
+  }
+  delay(500);
+}
